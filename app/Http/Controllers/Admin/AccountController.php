@@ -33,8 +33,9 @@ class AccountController extends Controller
     Public function store(Request $request){ 
         $rules=[
         'first_name' => 'required|string|min:3|max:50',             
-        'email' => 'required|email|unique:admins',
-        "mobile" => 'required|unique:admins|numeric|digits:10',
+        'user_id' => 'required|max:10|unique:admins',
+        'email' => 'required|email',
+        "mobile" => 'required|numeric|digits:10',
         "role_id" => 'required',
         "password" => 'required|min:6|max:15', 
         
@@ -49,7 +50,7 @@ class AccountController extends Controller
             return response()->json($response);// response as json
         }
         $password=bcrypt($request['password']);
-        $accounts = DB::select(DB::raw("insert into `admins` (`first_name` , `last_name` , `role_id` , `email` , `password` , `mobile` , `password_plain` , `status`) values ('$request->first_name' , '$request->last_name' , '$request->role_id' , '$request->email' , '$password' , '$request->mobile' , '$request->password' , '1')")); 
+        $accounts = DB::select(DB::raw("insert into `admins` (`first_name` , `last_name` , `role_id` , `email` , `password` , `mobile`, `user_id` , `password_plain` , `status`) values ('$request->first_name' , '$request->last_name' , '$request->role_id' , '$request->email' , '$password' , '$request->mobile' ,'$request->user_id' , '$request->password' , '1')")); 
         $response=['status'=>1,'msg'=>'Account Created Successfully'];
         return response()->json($response);   
     }

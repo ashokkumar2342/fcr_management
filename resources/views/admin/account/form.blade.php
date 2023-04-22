@@ -16,20 +16,20 @@
                 <form action="{{ route('admin.account.post') }}" method="post" class="add_form" autocomplete="off">
                 {{ csrf_field() }}
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <div class="form-group">
                             <label for="exampleInputEmail1">First Name</label>
                             <span class="fa fa-asterisk"></span>
                             <input Name="first_name" class="form-control"  placeholder="Enter First Name" required="" maxlength="50">
                         </div>                                
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Last Name</label> 
                             <input Name="last_name" class="form-control"  placeholder="Enter Last Name" maxlength="50">
                         </div>                                
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <div class="form-group">
                             <label>Role</label>
                             <span class="fa fa-asterisk"></span>
@@ -39,6 +39,16 @@
                                 @endforeach 
                             </select>
                         </div>                               
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label>User Id</label>
+                            <span class="fa fa-asterisk"></span> 
+                            <div class="input-group">
+                                
+                                <input type="text" name="user_id" class="form-control" id="user_id" placeholder="Enter User Id" maxlength="10">
+                            </div> 
+                        </div>
                     </div>
                     <div class="col-lg-4">
                         <div class="form-group">

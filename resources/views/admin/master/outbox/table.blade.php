@@ -1,15 +1,15 @@
 <table id="outbox_datatable" class="table table-striped table-bordered" >
 <thead>                            <tr>
         <th class="text-nowrap">Sr.No.</th>
-        <th class="text-nowrap">Category</th>
-        <th class="text-nowrap">Tasks</th>
-        <th class="text-nowrap">Assigned Date</th>
-        <th class="text-nowrap">Due Date</th>
-        <th class="text-nowrap">Department</th>
-        <th class="text-nowrap">Officer Assigned</th>   
-        <th class="text-nowrap">Latest Remarks</th>   
+        <th class="text-nowrap">Date</th>
+        <th class="text-nowrap">Case No</th>
+        <th class="text-nowrap">Case Year</th>
+        <th class="text-nowrap">Case Title</th>
+        <th class="text-nowrap">Task Details</th>
+        <th class="text-nowrap">Case Releted To</th>   
+        <th class="text-nowrap">Due Date</th> 
         <th class="text-nowrap">Days Left</th>   
-        <th class="text-nowrap">Attach.</th>  
+        <th class="text-nowrap">Document</th>  
         <th>Status</th>
         <th class="text-nowrap">Action</th>
     </tr>
@@ -21,14 +21,14 @@ $arrayId=1;
 @foreach ($rs_outbox as $outbox)
 <tr>
     <td class="text-nowrap">{{ $arrayId ++ }}</td>
-    <td class="text-nowrap">{{ $outbox->category_name }}</td> 
-    <td class="text-nowrap">{{ $outbox->task_details }}</td> 
-    <td class="text-nowrap">{{ $outbox->create_date }}</td> 
-    <td class="text-nowrap">{{ $outbox->due_date }}</td>
-    <td class="text-nowrap">{{ $outbox->departments }}</td>
-    <td class="text-nowrap">{{ $outbox->task_officers }}</td>
-    <td class="text-nowrap">{{ $outbox->latest_remarks }}</td>
-    <td class="text-nowrap">{{ $outbox->days_left }}</td>
+    <td class="text-nowrap">{{ date('d-m-Y',strtotime($outbox->create_date)) }}</td> 
+    <td class="text-nowrap">{{ $outbox->case_no }}</td>    
+    <td class="text-nowrap">{{ $outbox->case_year }}</td>  
+    <td class="text-nowrap">{{ $outbox->title }}</td> 
+    <td class="text-nowrap">{{ $outbox->task_details }}</td>  
+    <td class="text-nowrap">{{ $outbox->case_related_to }}</td> 
+    <td class="text-nowrap">{{ $outbox->due_date }}</td>  
+    <td class="text-nowrap"></td>
     @if(!empty($outbox->attachment)) 
     <td class="text-nowrap"><a target="_blank" href="{{route('admin.Master.outboxattachment',$outbox->id)}}">Attchment</a></td>
     @else
@@ -46,7 +46,7 @@ $arrayId=1;
      } 
 
      @endphp 
-        <td class="text-nowrap">{{ $outbox->status_type }}<br>
+        <td class="text-nowrap"><td>
         
        @if ($outbox->status==1) 
         <a id="btn_markcomplete" button-click="btn_outbox_complete" success-popup="true" onclick="callAjax(this,'{{ route('admin.Master.markcomplete',$outbox->id) }}')" title="" class="btn {{$color}} btn-xs" style="color:#fff"><i class="fa fa-pencil"></i>Mark Complete</a>

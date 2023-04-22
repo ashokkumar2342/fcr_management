@@ -1,58 +1,60 @@
-<table id="inbox_datatable" class="table table-striped table-bordered">
+<table id="outbox_datatable" class="table table-striped table-bordered" >
 <thead>                            <tr>
         <th class="text-nowrap">Sr.No.</th>
-        <th class="text-nowrap">Category</th>
-        <th class="text-nowrap">Tasks</th>
-        <th class="text-nowrap">Assigned Date</th>
-        <th class="text-nowrap">Due Date</th>
-        <th class="text-nowrap">Department</th>
-        <th class="text-nowrap">Officer Assigned</th>   
-        <th class="text-nowrap">Latest Remarks</th>   
+        <th class="text-nowrap">Date</th>
+        <th class="text-nowrap">Case No</th>
+        <th class="text-nowrap">Case Year</th>
+        <th class="text-nowrap">Case Title</th>
+        <th class="text-nowrap">Task Details</th>
+        <th class="text-nowrap">Case Releted To</th>   
+        <th class="text-nowrap">Due Date</th> 
         <th class="text-nowrap">Days Left</th>   
-        <th class="text-nowrap">Attachment</th>  
+        <th class="text-nowrap">Document</th>  
         <th>Status</th>
         <th class="text-nowrap">Action</th>
     </tr>
 </thead>
+<tbody>
 @php
 $arrayId=1;
 @endphp
-<tbody>
-@foreach ($rs_inbox as $inbox)
+@foreach ($rs_outbox as $outbox)
 <tr>
-    <td class="text-nowrap">{{ $arrayId ++ }}</td>
-    <td class="text-nowrap">{{ $inbox->category_name }}</td> 
-    <td class="text-nowrap">{{ $inbox->task_details }}</td> 
-    <td class="text-nowrap">{{ $inbox->create_date }}</td> 
-    <td class="text-nowrap">{{ $inbox->due_date }}</td>
-    <td class="text-nowrap">{{ $inbox->departments }}</td>
-    <td class="text-nowrap">{{ $inbox->task_officers }}</td>
-    <td class="text-nowrap">{{ $inbox->latest_remarks }}</td>
-    <td class="text-nowrap">{{ $inbox->days_left }}</td>
-    @if(!empty($inbox->attachment)) 
-    <td class="text-nowrap"><a target="_blank" href="{{route('admin.Master.outboxattachment',$inbox->id)}}">Attchment</a></td>
+    <td class="text-nowrap">{{ $arrayId++ }}</td>
+    <td class="text-nowrap"></td> 
+    <td class="text-nowrap">{{ $outbox->case_no }}</td>    
+    <td class="text-nowrap">{{ $outbox->case_year }}</td>  
+    <td class="text-nowrap">{{ $outbox->title }}</td> 
+    <td class="text-nowrap">{{ $outbox->task_details }}</td>  
+    <td class="text-nowrap">{{ $outbox->case_related_to }}</td> 
+    <td class="text-nowrap">{{ $outbox->due_date }}</td>  
+    <td class="text-nowrap">{{ $outbox->days_left }}</td>
+    @if(!empty($outbox->attachment)) 
+    <td class="text-nowrap"><a target="_blank" href="{{route('admin.Master.outboxattachment',$outbox->id)}}">Attchment</a></td>
     @else
     <td></td> 
     @endif
     @php
-     if ($inbox->status==0) {
+     if ($outbox->status==0) {
         $color="btn-danger";
      }
-     if ($inbox->status==1) {
+     if ($outbox->status==1) {
          $color="btn-warning";
      } 
-     if ($inbox->status==2) {
+     if ($outbox->status==2) {
          $color="btn-success";
      } 
 
      @endphp 
-        <td>{{ $inbox->status_type }}<br>
-        @if($inbox->status==0) 
-        <a id="btn_markcomplete" button-click="btn_inbox_inproces" success-popup="true" onclick="callAjax(this,'{{ route('admin.Master.inboxstatus',$inbox->id) }}')" title="" class="btn btn-danger btn-xs" style="color:#fff"><i class="fa fa-pencil"></i>Get Acknowledged Pending</a>
+        <td class="text-nowrap">{{ $outbox->status_type }}<br>
+        
+       @if ($outbox->status==1) 
+        <a id="btn_markcomplete" button-click="btn_outbox_complete" success-popup="true" onclick="callAjax(this,'{{ route('admin.Master.markcomplete',$outbox->id) }}')" title="" class="btn {{$color}} btn-xs" style="color:#fff"><i class="fa fa-pencil"></i>Mark Complete</a>
         @endif
-     
-    <td class="text-nowrap ">
-        <a id="btn_remarks" onclick="callPopupLarge(this,'{{ route('admin.Master.outboxremarks',$inbox->id) }}')" title="" class="btn btn-info btn-xs" style="color:#fff"><i class="fa fa-comment"></i>Remarks</a>
+
+        </td>
+    <td class="text-nowrap">
+        <a id="btn_remarks" onclick="callPopupLarge(this,'{{ route('admin.Master.outboxremarks',$outbox->id) }}')" title="" class="btn btn-info btn-xs" style="color:#fff"><i class="fa fa-comment"></i>Remarks</a>
         
     </td>
 </tr> 

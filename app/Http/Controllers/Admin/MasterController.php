@@ -227,8 +227,8 @@ class MasterController extends Controller
       try {             
              
           $categorys= DB::select(DB::raw("select * from `categorys`;"));    
-          // $officers= DB::select(DB::raw("select `off`.`id`, `off`.`officer_name`, `off`.`designation`, `dept`.`department_name` from `officers` `off` inner join `department` `dept` on `dept`.`id` = `off`.`department_id` where `off`.`status` = 1 order by `off`.`officer_name`, `off`.`designation`"));    
-          return view('admin.master.tasks.index',compact('categorys','officers'));
+          $users= DB::select(DB::raw("select * from `admins`"));    
+          return view('admin.master.tasks.index',compact('categorys','users'));
         } catch (Exception $e) {
             
         }
@@ -237,11 +237,13 @@ class MasterController extends Controller
    public function taskStore(Request $request,$id=null)
    {  
         $rules=[
-            'category_name' => 'required', 
+            'case_no' => 'required', 
+            'case_title' => 'required', 
+            'case_year' => 'required', 
             'task_details' => 'required', 
-            'create_date' => 'required', 
             'due_date' => 'required', 
-            'officer_name' => 'required', 
+            'case_releted_to' => 'required', 
+            'attachment' => 'required', 
             
         ]; 
         $validator = Validator::make($request->all(),$rules);
@@ -253,7 +255,7 @@ class MasterController extends Controller
           return response()->json($response);// response as json
         }
         $admin=Auth::guard('admin')->user();
-        $officer_id = implode(",", $request->officer_name);
+        $user_id = $admin->id;
         $vpath='';
         if ($request->hasFile('attachment')) { 
             $dirpath = Storage_path() . '/app/attachment';
@@ -264,22 +266,16 @@ class MasterController extends Controller
             $store= \Storage::put($vpath,$attachment);
         }
         $unique_id = uniqid(); 
-        $rs_insert = DB::select(DB::raw("insert into `tasks` (`category_id` , `task_details` , `create_date` , `due_date` , `attachment`, `created_by` ,  `unique_id`) values ('$request->category_name' , '$request->task_details' , now() , '$request->due_date' , '$vpath', $admin->id ,'$unique_id')"));
-        $rs_newid = DB::select(DB::raw("select `id` from `tasks` where `unique_id` = '$unique_id' limit 1;"));
-        $newid = $rs_newid[0]->id; 
-        $taskAssingns= DB::select(DB::raw("insert into `task_assigned` (`task_id`, `officer_id`, `assigned_date`, `status`) select $newid, `id`, now(), 0 from `officers` where `id` in ($officer_id);"));
+        $create_date = date('Y-m-d'); 
+        $rs_insert = DB::select(DB::raw("insert into `case_details` (`unique_id` ,`create_date` , `created_by` , `title` , `case_no` , `case_year`,`task_details`,`attachment`, `due_date`, `case_related_to`,`status`) values ('$unique_id','$create_date' ,'$user_id','$request->title','$request->case_no','$request->case_year','$request->task_details','$vpath','$request->due_date' ,'$request->case_releted_to', '0')"));
 
-        $email_Id= DB::select(DB::raw("select `email_id` , `officer_name` , `designation`  from `officers` where `id` in ($officer_id);"));
-        foreach ($email_Id as $key => $value) { 
-            $data["email"] = $value->email_id;
-            $data["user_name"] = $value->officer_name.'('.$value->designation.')';
-            $data["task_details"] = $request->task_details;
-            $data["subject"] = "New Task Assigned";
-            $data["from"] = "info@dmsjhajjar.in";
-            \Mail::send('emails.attachment', $data, function($message)use($data) {
-            $message->to($data['email'])->from( $data['from'], 'Tasks' )->subject($data["subject"]); 
-            }); 
-        }
+
+        $rs_newid = DB::select(DB::raw("select `id` from `case_details` where `unique_id` = '$unique_id' limit 1;"));
+        $newid = $rs_newid[0]->id;  
+
+        // $taskAssingns= DB::select(DB::raw("insert into `case_latest_history` (`entry_date`, `entry_date_time`, `entry_by`,`case_id`, `remarks`, `attachment`, `status`) values ('$create_date',now() ,'$user_id','$newid','$rs_newid[0]->task_details','$vpath', '0')"));
+
+        
 
         $response=['status'=>1,'msg'=>'Submit Successfully'];
         return response()->json($response);
@@ -301,15 +297,9 @@ class MasterController extends Controller
         if($rs_condition !=3){
             $status_condition = " and `tk`.`status` = $rs_condition ";   
         }
+
         $admin=Auth::guard('admin')->user();
-        $rs_outbox= DB::select(DB::raw("select `tk`.`id`, `cat`.`category_name`, `tk`.`task_details`, `tk`.`create_date`, `tk`.`due_date`, `tk`.`attachment`, `tk`.`status`, `ts`.`name` as `status_type`, 
-            CASE  when `tk`.`status` < 2 then datediff(`tk`.`due_date`, now()) else 0 end as `days_left`,
-            `uf_task_departments`(`tk`.`id`) as `departments`, `uf_task_officers`(`tk`.`id`) as `task_officers`, `uf_latest_remarks`(`tk`.`id`) as `latest_remarks`
-            from `tasks` `tk`
-            inner join `categorys` `cat` on `cat`.`id` = `tk`.`category_id` 
-            inner join `task_status` `ts` on `ts`.`id` = `tk`.`status`
-            where `tk`.`created_by` = $admin->id $status_condition
-            order by `cat`.`category_name`, `tk`.`task_details`;"));
+        $rs_outbox= DB::select(DB::raw("select * from `case_details`"));      
         return view('admin.master.outbox.table' , compact('rs_outbox'));
     }
     public function outboxremarks($rs_id)

@@ -58,18 +58,18 @@ public function login(){
 public function loginPost(Request $request){ 
 
   $this->validate($request, [
-              'mobile' => 'required', 
+              'user_id' => 'required', 
               'password' => 'required',
               'captcha' => 'required|captcha' 
           ]);
-          $admins=Admin::where('mobile',$request->email)->first();
+          $admins=Admin::where('user_id',$request->user_id)->first();
           if (!empty($admins)) { 
             if ($admins->status==2) {
             return redirect()->route('student.resitration.verification',Crypt::encrypt($admins->id)); 
             }
           }
           $credentials = [
-                     'mobile' => $request['mobile'],
+                     'user_id' => $request['user_id'],
                      'password' => $request['password'],
                      'status' => 1,
                  ]; 
