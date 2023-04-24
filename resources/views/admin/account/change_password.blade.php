@@ -20,7 +20,7 @@
                             <label class="control-label mb-10">Old Password</label>
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="icon-lock"></i></div>
-                                <input type="password" class="form-control" name="oldpassword" id="oldpassword" placeholder="Enter old password" required="">
+                                <input type="password" class="form-control" name="oldpassword" id="oldpassword" placeholder="Enter old password" required>
                             </div>
                         </div> 
                         <div class="form-group">
