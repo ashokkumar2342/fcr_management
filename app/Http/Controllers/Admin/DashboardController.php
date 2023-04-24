@@ -24,7 +24,7 @@ class DashboardController extends Controller
         
         $outCompleted =DB::select(DB::raw("select count(*) as `ttask` from `case_details` where `created_by` =$admin->id and `status` = 2;"));
 
-        // $inboxTotal =DB::select(DB::raw("select count(*) as `ttask` from `task_assigned` `ta` where `ta`.`officer_id` in (select `officer_id` from `officer_assigns` where `user_id` = $admin->id);"));
+        $inboxTotal =DB::select(DB::raw("select count(*) as `ttask` from `case_details` `ta` where `ta`.`case_related_to` = $admin->id;"));
         // $inboxacknowledgedPending =DB::select(DB::raw("select count(*) as `ttask` from `task_assigned` `ta` where `ta`.`officer_id` in (select `officer_id` from `officer_assigns` where `user_id` = $admin->id) and `status` = 0;"));
         // $inboxInProgress =DB::select(DB::raw("select count(*) as `ttask` from `task_assigned` `ta` where `ta`.`officer_id` in (select `officer_id` from `officer_assigns` where `user_id` = $admin->id) and `status` = 1;"));
         // $inboxCompleted =DB::select(DB::raw("select count(*) as `ttask` from `task_assigned` `ta` where `ta`.`officer_id` in (select `officer_id` from `officer_assigns` where `user_id` = $admin->id) and `status` = 2;"));

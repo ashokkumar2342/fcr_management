@@ -4,6 +4,7 @@
       <thead>
         <tr>
           <th>Sr.No.</th> 
+          <th>User ID</th>
           <th>Name</th>
           <th>Mobile</th> 
           <th>Email Id</th>
@@ -19,6 +20,7 @@
         @foreach($accounts as $account) 
         <tr>
           <td>{{ $arrayId ++ }}</td> 
+          <td>{{ $account->user_id }}</td>
           <td>{{ $account->first_name }} {{ $account->last_name}}</td>
           <td>{{ $account->mobile }}</td> 
           <td>{{ $account->email }}</td>

@@ -80,7 +80,7 @@
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-tasks"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Total Tasks</span>
-                <span class="info-box-number">{{-- {{$inboxTotal[0]->ttask}} --}}</span>
+                <span class="info-box-number">{{$inboxTotal[0]->ttask}}</span>
               </div> 
             </div>
             </a> 

@@ -16,7 +16,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card card-primary"> 
-                            <form action="{{ route('admin.Master.task.store') }}" method="post" class="add_form" content-refresh="categorys_table" enctype="multipart/form-data">
+                            <form action="{{ route('admin.Master.Case.store') }}" method="post" class="add_form" enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <div class="card-body row">
                                     <div class="col-lg-3 form-group">
@@ -34,13 +34,13 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-7 form-group">
-                                        <label for="exampleInputEmail1">Task Titile</label>
+                                        <label for="exampleInputEmail1">Case Titile</label>
                                         <input type="text" name="case_title"  class="form-control" />
                                     </div>
                                     
                                     
                                     <div class="form-group col-lg-12">
-                                        <label for="exampleInputEmail1">Task Details</label> 
+                                        <label for="exampleInputEmail1">Case Details</label> 
                                         <textarea class="form-control" name="task_details" maxlength="200"></textarea>
                                     </div>
                                     

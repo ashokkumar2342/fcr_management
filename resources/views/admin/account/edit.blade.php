@@ -11,21 +11,7 @@
                 {{ csrf_field() }}
                     <div class="box-body">
                         <div class="row">
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                  <label for="exampleInputEmail1">First Name</label>
-                                  <span class="fa fa-asterisk"></span>
-                                  <input Name="first_name" class="form-control" value="{{ $accounts[0]->first_name }}"  maxlength="50" placeholder="Enter first name">
-                                </div>                                
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                  <label for="exampleInputEmail1">Last Name</label>
-
-                                  <input Name="last_name" class="form-control"  value="{{ $accounts[0]->last_name }}"  maxlength="50" placeholder="Enter last name">
-                                </div>                                
-                            </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                <div class="form-group">
                                  <label>Role</label>
                                  <span class="fa fa-asterisk"></span>
@@ -36,21 +22,30 @@
                                       </select>
                                 </div>                               
                             </div>
-                            <div class="col-lg-4">
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">First Name</label>
+                                  <span class="fa fa-asterisk"></span>
+                                  <input Name="first_name" class="form-control" value="{{ $accounts[0]->first_name }}"  maxlength="50" placeholder="Enter first name">
+                                </div>                                
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                  <label for="exampleInputEmail1">Last Name</label>
+
+                                  <input Name="last_name" class="form-control"  value="{{ $accounts[0]->last_name }}"  maxlength="50" placeholder="Enter last name">
+                                </div>                                
+                            </div>
+                            <div class="col-lg-6">
                                 <div class="form-group">
                                   <label for="exampleInputEmail1">E-mail ID</label>
                                   <span class="fa fa-asterisk"></span>
                                   <input type="text" name="email" class="form-control" value="{{ $accounts[0]->email }}" id="exampleInputEmail1" maxlength="50" placeholder="Enter email">
                                 </div>                                
                             </div>
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                  <label for="Password">Password</label>
-                                  <span class="fa fa-asterisk"></span>
-                                  <input type="password" name="password" class="form-control" id="exampleInputPassword1" maxlength="15" placeholder="Password" min="6">
-                                </div>                               
-                            </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <div class="form-group">
                                   <label for="exampleInputEmail1">Mobile.No.</label>
                                   <span class="fa fa-asterisk"></span>
