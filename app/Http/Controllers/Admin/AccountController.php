@@ -120,7 +120,7 @@ class AccountController extends Controller
     
     Public function DistrictsAssign(){
         $admin=Auth::guard('admin')->user(); 
-        $users=DB::select(DB::raw("select `id`, `first_name`, `last_name`, `email`, `mobile` from `admins` where `status` = 1 and `id` <> 1 Order By `first_name`")); 
+        $users=DB::select(DB::raw("select `id`, `first_name`, `last_name`, `email`, `mobile` from `admins` where `status` = 1 and `role_id` = 5 Order By `first_name`")); 
         return view('admin.account.assign.district.index',compact('users'));
        
     }

@@ -88,22 +88,83 @@ class CaseController extends Controller
         return view('admin.master.outbox.index' , compact('click_id'));
     }
     
-//     public function outboxfilter($rs_condition)
-//     {   
-//         $status_condition = '';
-//         if($rs_condition !=3){
-//             $status_condition = " and `tk`.`status` = $rs_condition ";   
-//         }
+    // public function outboxfilter($rs_condition)
+    // {   
+    //     $status_condition = '';
+    //     if($rs_condition !=3){
+    //         $status_condition = " and `tk`.`status` = $rs_condition ";   
+    //     }
 
-//         $admin=Auth::guard('admin')->user();
-//         $rs_outbox= DB::select(DB::raw("select * from `case_details`"));      
-//         return view('admin.master.outbox.table' , compact('rs_outbox'));
-//     }
-//     public function outboxremarks($rs_id)
-//     {   
-//         $tasksRemarks= DB::select(DB::raw("select `tr`.`id` , `tr`.`remarks_date`, `tr`.`remarks`, `tr`.`attachment`, `off`.`officer_name`, `off`.`designation` from `task_remarks` `tr` inner join `officers` `off` on `off`.`id` = `tr`.`officer_id` where `tr`.`task_id` = $rs_id order by `tr`.`id` desc;"));
-//         return view('admin.master.outbox.remarks' , compact('tasksRemarks' , 'rs_id'));
-//     }
+    //     $admin=Auth::guard('admin')->user();
+    //     $rs_outbox= DB::select(DB::raw("select * from `case_details`"));      
+    //     return view('admin.master.outbox.table' , compact('rs_outbox'));
+    // }
+
+    public function outboxfilter($rs_condition)
+    {   
+        $status_condition = '';
+        if($rs_condition !=2){
+            $status_condition = " and `cd`.`status` = $rs_condition ";   
+        }
+        $admin = Auth::guard('admin')->user();
+        $user_id = $admin->id;
+        $rs_outbox= DB::select(DB::raw("select `cd`.`id`, date_format(`cd`.`create_date`,'%d %b %Y') as `date_create`, `cd`.`title`, `cd`.`case_no`, `cd`.`case_year`, `cd`.`case_details`, `cd`.`attachment`, date_format(`cd`.`due_date`,'%d %b %Y') as `date_due`, `cd`.`status`, case `cd`.`status` when 0 then 'Pending' When 1 then 'Completed' Else '' end as `case_status`, `usr`.`first_name`, `clh`.`remarks` from `case_details` `cd` inner join `admins` `usr` on `usr`.`id` = `cd`.`case_related_to` inner join `case_latest_history` `clh` on `clh`.`case_id` = `cd`.`id` where `cd`.`created_by` = $user_id $status_condition order by `cd`.`id`;"));
+        return view('admin.master.outbox.table' , compact('rs_outbox'));
+    }
+
+
+    public function caseRemarks($rs_id)
+    {   
+        $admin = Auth::guard('admin')->user();
+        $user_id = $admin->id;
+        $rs_Remarks= DB::select(DB::raw("select `crh`.`id`, date_format(`crh`.`entry_date_time`,'%d %b %Y %H:%i') as `remark_date_time`, `crh`.`entry_by`, `crh`.`remarks`, `crh`.`attachment` from `case_remarks_history` `crh` where `crh`.`case_id` = $rs_id order by `crh`.`id` desc;"));
+        return view('admin.master.caseDetails.remarks' , compact('rs_Remarks' , 'rs_id', 'user_id'));
+    }
+
+    public function caseRemarksAdd($rs_id)
+    {
+        return view('admin.master.caseDetails.add_remarks' , compact('rs_id'));
+    }
+
+    public function caseRemarksStore(Request $request, $rs_id)
+    {
+        $rules=[
+            'remarks' => 'required',
+            'attachment' => 'required', 
+        ]; 
+        $validator = Validator::make($request->all(),$rules);
+        if ($validator->fails()) {
+          $errors = $validator->errors()->all();
+          $response=array();
+          $response["status"]=0;
+          $response["msg"]=$errors[0];
+          return response()->json($response);// response as json
+        }
+        $admin = Auth::guard('admin')->user();
+        $user_id = $admin->id;
+        $unique_id = uniqid();
+        $l_case_id = $rs_id;
+        $remarks = MyFuncs::removeSpacialChr($request->remarks);
+
+        
+        $vpath='';
+        $file_path = "/app/attachment/".$unique_id.".pdf";
+        if ($request->hasFile('attachment')) { 
+            $dirpath = Storage_path() . '/app/attachment';
+            $vpath = '/attachment/'.$unique_id.'.pdf';
+            @mkdir($dirpath, 0755, true);
+            $file =$request->attachment;
+            $attachment = file_get_contents($file); 
+            $store= \Storage::put($vpath,$attachment);
+        }
+
+       
+        
+        $rs_save = DB::select(DB::raw("call `up_save_new_remarks`($l_case_id, $user_id, '$remarks', '$file_path');"));
+
+        $response=['status'=>$rs_save[0]->s_status,'msg'=>$rs_save[0]->result];
+        return response()->json($response);
+    }
 //     public function outboxremarksstore(Request $request,$rs_id)
 //     {   
 //         $rules=[
@@ -131,51 +192,69 @@ class CaseController extends Controller
 //         $response=['status'=>1,'msg'=>'Submit Successfully'];
 //         return response()->json($response);
 //     }
-//     public function outboxattachment($id)
-//     {   
-//         $tasksatch= DB::select(DB::raw("select * from `tasks` where `id` =$id;"));
-//         $file_path=Storage_path().'/app'.$tasksatch[0]->attachment;
-//         return response()->file($file_path);
-//     }
-//     public function remaksattachment($id)
-//     {   
-//         $tasksatch= DB::select(DB::raw("select * from `task_remarks` where `id` =$id;"));
-//         $file_path=Storage_path().'/app'.$tasksatch[0]->attachment;
-//         return response()->file($file_path);
-//     }
+    public function caseAttachment($id)
+    {   
+        $tasksatch= DB::select(DB::raw("select * from `case_details` where `id` = $id limit 1;"));
+        $file_path=Storage_path().$tasksatch[0]->attachment;
+        return response()->file($file_path);
+    }
     
-//     public function markcomplete($rs_id)
-//     {
-//         $rs_update= DB::select(DB::raw("update `tasks` set `status` = 2 where `id` =$rs_id limit 1 ;"));
-//         $rs_update= DB::select(DB::raw("update `task_assigned` set `status` = 2 where `task_id` =$rs_id ;"));
-//         $response=['status'=>1,'msg'=>'Mark Complete Successfully'];
-//         return response()->json($response); 
-//     }
+    public function remaksattachment($id)
+    {   
+        $tasksatch= DB::select(DB::raw("select * from `case_remarks_history` where `id` = $id limit 1;"));
+        $file_path=Storage_path().$tasksatch[0]->attachment;
+        return response()->file($file_path);
+    }
+    
+    public function markcomplete($rs_id)
+    {
+        $admin = Auth::guard('admin')->user();
+        $user_id = $admin->id;
+        $l_case_id = $rs_id;
+        $rs_save = DB::select(DB::raw("call `up_mark_complete_case`($l_case_id, $user_id);"));
+
+        $response=['status'=>$rs_save[0]->s_status,'msg'=>$rs_save[0]->result];
+        return response()->json($response);
+    }
 //     //------------change-Task-Status------------------change-Task-Status----------------------------
 
-//     public function inbox($click_id=null)
-//     {   
+    public function inbox($click_id=null)
+    {   
         
-//         return view('admin.master.inbox.index' , compact('click_id'));
-//     }
-//     public function inboxfilter($rs_condition)
-//     {   
-//         $status_condition = '';
-//         if($rs_condition !=3){
-//             $status_condition = " and `tk`.`status` = $rs_condition ";   
-//         }
-//         $admin=Auth::guard('admin')->user();
-//         $rs_inbox= DB::select(DB::raw("select `tk`.`id`, `cat`.`category_name`, `tk`.`task_details`, `tk`.`create_date`, `tk`.`due_date`, `tk`.`attachment`, `tk`.`status`, `ts`.`name` as `status_type`, 
-//             CASE  when `tk`.`status` < 2 then datediff(`tk`.`due_date`, now()) else 0 end as `days_left`,
-//             `uf_task_departments`(`tk`.`id`) as `departments`, `uf_task_officers`(`tk`.`id`) as `task_officers`, `uf_latest_remarks`(`tk`.`id`) as `latest_remarks`
-//             from `task_assigned` `ta`
-//             inner join `tasks` `tk` on `tk`.`id` = `ta`.`task_id`
-//             inner join `categorys` `cat` on `cat`.`id` = `tk`.`category_id` 
-//             inner join `task_status` `ts` on `ts`.`id` = `tk`.`status`
-//             where `ta`.`officer_id` in (select `officer_id` from `officer_assigns` where `user_id` = $admin->id)  $status_condition 
-//             order by `cat`.`category_name`, `tk`.`task_details`;"));
-//         return view('admin.master.inbox.table' , compact('rs_inbox'));
-//     }
+        return view('admin.master.inbox.index' , compact('click_id'));
+    }
+
+    public function inboxfilter($rs_condition)
+    {   
+        $status_condition = '';
+        if($rs_condition !=2){
+            $status_condition = " and `cd`.`status` = $rs_condition ";   
+        }
+        $admin = Auth::guard('admin')->user();
+        $user_id = $admin->id;
+        $rs_inbox= DB::select(DB::raw("select `cd`.`id`, date_format(`cd`.`create_date`,'%d %b %Y') as `date_create`, `cd`.`title`, `cd`.`case_no`, `cd`.`case_year`, `cd`.`case_details`, `cd`.`attachment`, date_format(`cd`.`due_date`,'%d %b %Y') as `date_due`, `cd`.`status`, case `cd`.`status` when 0 then 'Pending' When 1 then 'Completed' Else '' end as `case_status`, `usr`.`first_name`, `clh`.`remarks` from `case_details` `cd` inner join `admins` `usr` on `usr`.`id` = `cd`.`created_by` inner join `case_latest_history` `clh` on `clh`.`case_id` = `cd`.`id` where `cd`.`case_related_to` = $user_id $status_condition order by `cd`.`id`;"));
+        return view('admin.master.inbox.table' , compact('rs_inbox'));
+    }
+
+    public function notification($bv_condition=0)
+    {   
+        $status_condition = '';
+        if($bv_condition !=2){
+            $status_condition = " and `nfs`.`status` = $bv_condition ";   
+        }
+
+        $admin = Auth::guard('admin')->user();
+        $user_id = $admin->id;
+        $role_id = $admin->role_id;
+        
+        if($role_id == 5){
+            $rs_notification = DB::select(DB::raw("select `nfs`.`id`, date_format(`nfs`.`entry_date_time`, '%d %b %Y %H:%i') as `remark_date_time`, `nfs`.`remarks`, `nfs`.`attachment`, `nfs`.`case_id`, `usr`.`first_name`, `cd`.`case_no`, `cd`.`title`, `nfs`.`status` from `notifications` `nfs` inner join `case_details` `cd` on `cd`.`id` = `nfs`.`case_id` inner join `admins` `usr` on `usr`.`id` = `cd`.`created_by` where `nfs`.`notification_for` = $user_id $status_condition order by `nfs`.`id`;"));
+        }else{
+            $rs_notification = DB::select(DB::raw("select `nfs`.`id`, date_format(`nfs`.`entry_date_time`, '%d %b %Y %H:%i') as `remark_date_time`, `nfs`.`remarks`, `nfs`.`attachment`, `nfs`.`case_id`, `usr`.`first_name`, `cd`.`case_no`, `cd`.`title`, `nfs`.`status` from `notifications` `nfs` inner join `case_details` `cd` on `cd`.`id` = `nfs`.`case_id` inner join `admins` `usr` on `usr`.`id` = `cd`.`case_related_to` where `nfs`.`notification_for` = $user_id $status_condition order by `nfs`.`id`;"));
+        }
+        return view('admin.master.notification.notification' , compact('rs_notification', 'role_id'));
+    }
+
 //     public function inboxstatus($rs_id)
 //     {   
 //         $admin=Auth::guard('admin')->user();

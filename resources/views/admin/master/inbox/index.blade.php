@@ -8,36 +8,34 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-4"> 
+            <div class="col-sm-3"> 
                 <h3>Inbox :</h3> 
             </div> 
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-info btn-block" id="btn_inbox_all" data-table-excel-2="inbox_datatable" onclick="callAjax(this,'{{ route('admin.Master.inboxfilter',3) }}','inbox_table')"> <i class="fas fa-envelope"></i> All Tasks</button>
+            <div class="col-sm-3">
+                <button type="button" class="btn btn-danger btn-block" id="btn_inbox_acknowledged" data-table-excel-2="inbox_datatable" onclick="callAjax(this,'{{ route('admin.Master.inboxfilter',0) }}','inbox_table')">Pending</button>   
             </div>
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-danger btn-block" id="btn_inbox_acknowledged" data-table-excel-2="inbox_datatable" onclick="callAjax(this,'{{ route('admin.Master.inboxfilter',0) }}','inbox_table')">Acknowledged Pending</button>   
+            <div class="col-sm-3">
+                <button type="button" class="btn btn-warning btn-block" id="btn_inbox_inproces" data-table-excel-2="inbox_datatable" onclick="callAjax(this,'{{ route('admin.Master.inboxfilter',1) }}','inbox_table')">Completed</button>
             </div>
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-warning btn-block" id="btn_inbox_inproces" data-table-excel-2="inbox_datatable" onclick="callAjax(this,'{{ route('admin.Master.inboxfilter',1) }}','inbox_table')">In Progress</button>
+            <div class="col-sm-3">
+                <button type="button" class="btn btn-info btn-block" id="btn_inbox_all" data-table-excel-2="inbox_datatable" onclick="callAjax(this,'{{ route('admin.Master.inboxfilter',2) }}','inbox_table')"> <i class="fas fa-envelope"></i> All Cases</button>
             </div>
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-success btn-block" id="btn_inbox_complete" data-table-excel-2="inbox_datatable" onclick="callAjax(this,'{{ route('admin.Master.inboxfilter',2) }}','inbox_table')">Completed</button>
-            </div> 
         </div> 
         <div class="card card-body">
         <div class="col-lg-12 table-responsive" id="inbox_table"> 
             <table class="table table-striped table-bordered">
-                <thead>                            <tr>
+                <thead>                            
+                    <tr>
                         <th class="text-nowrap">Sr.No.</th>
-                        <th class="text-nowrap">Category</th>
-                        <th class="text-nowrap">Tasks</th>
-                        <th class="text-nowrap">Assigned Date</th>
-                        <th class="text-nowrap">Due Date</th>
-                        <th class="text-nowrap">Department</th>
-                        <th class="text-nowrap">Officer Assigned</th>   
-                        <th class="text-nowrap">Latest Remarks</th>   
-                        <th class="text-nowrap">Days Left</th>   
+                        <th class="text-nowrap">Assigned By</th>
+                        <th class="text-nowrap">Date</th>
+                        <th class="text-nowrap">Case No</th>
+                        <th class="text-nowrap">Case Year</th>
+                        <th class="text-nowrap">Case Title</th>
+                        <th class="text-nowrap">Case Details</th>   
+                        <th class="text-nowrap">Due Date</th> 
                         <th class="text-nowrap">Attachment</th>  
+                        <th class="text-nowrap">Latest Remarks</th>  
                         <th>Status</th>
                         <th class="text-nowrap">Action</th>
                     </tr>
@@ -54,7 +52,7 @@
 @push('scripts')
 <script type="text/javascript">
 
-    if ({{$click_id}}==3) {
+    if ({{$click_id}}==2) {
     $('#btn_inbox_all').click();
     }
     if ({{$click_id}}==0) {
@@ -63,9 +61,7 @@
     if ({{$click_id}}==1) {
     $('#btn_inbox_inproces').click();
     }
-    if ({{$click_id}}==2) {
-    $('#btn_inbox_complete').click();
-    }
+    
 
 </script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>

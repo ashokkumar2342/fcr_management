@@ -65,19 +65,32 @@ Route::group(['middleware' => 'admin'], function() {
 	//     //-task-//
 	    Route::get('task', 'CaseController@newCaseIndex')->name('admin.Case.newCase');	   
 	    Route::post('task-store/{id?}', 'CaseController@NewCaseStore')->name('admin.Master.Case.store');	   
+
+	    Route::get('caseAttachment/{rs_id}', 'CaseController@caseAttachment')->name('admin.Master.caseAttachment');
+	    Route::get('remaksattachment/{id}', 'CaseController@remaksattachment')->name('admin.Master.remaksattachment');
+	    Route::get('caseRemarks/{rs_id}', 'CaseController@caseRemarks')->name('admin.Master.caseRemarks');
+	    Route::get('caseRemarksAdd/{rs_id}', 'CaseController@caseRemarksAdd')->name('admin.Master.caseRemarksAdd');
+	    Route::post('caseRemarksStore/{rs_id}', 'CaseController@caseRemarksStore')->name('admin.Master.caseRemarksStore');
+
+
 	//     //-task-remarks//
 	    Route::get('outbox/{click_id?}', 'CaseController@outbox')->name('admin.Case.outbox');
-	//     Route::get('outboxfilter/{rs_condition}', 'MasterController@outboxfilter')->name('admin.Master.outboxfilter');
-	//     Route::get('outboxremarks/{rs_id}', 'MasterController@outboxremarks')->name('admin.Master.outboxremarks');
-	//     Route::post('outboxremarksstore/{rs_id}', 'MasterController@outboxremarksstore')->name('admin.Master.outboxremarksstore');
-	//     Route::get('outboxattachment/{rs_id}', 'MasterController@outboxattachment')->name('admin.Master.outboxattachment');
-	//     Route::get('remaksattachment/{id}', 'MasterController@remaksattachment')->name('admin.Master.remaksattachment');
-	//     Route::get('markcomplete/{id}', 'MasterController@markcomplete')->name('admin.Master.markcomplete');
+	    Route::get('outboxfilter/{rs_condition}', 'CaseController@outboxfilter')->name('admin.Master.outboxfilter');
 	    
-	//     //-task-remarks//
-	//     Route::get('inbox/{click_id?}', 'MasterController@inbox')->name('admin.Master.inbox');  
-	//     Route::get('inboxfilter/{rs_condition}', 'MasterController@inboxfilter')->name('admin.Master.inboxfilter');
+	    
+
+	//     Route::post('outboxremarksstore/{rs_id}', 'MasterController@outboxremarksstore')->name('admin.Master.outboxremarksstore');
+	    
+	    
+	    
+	    Route::get('markcomplete/{id}', 'CaseController@markcomplete')->name('admin.Master.markcomplete');
+	    
+	//     
+	    Route::get('inbox/{click_id?}', 'CaseController@inbox')->name('admin.Master.inbox');  
+	    Route::get('inboxfilter/{rs_condition}', 'CaseController@inboxfilter')->name('admin.Master.inboxfilter');
 	//     Route::get('inboxstatus/{rs_condition}', 'MasterController@inboxstatus')->name('admin.Master.inboxstatus');
+
+	    Route::get('inboxfilter/{bv_condition?}', 'CaseController@notification')->name('admin.Master.notification');
 	    
 	});
 	
